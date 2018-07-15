@@ -13,8 +13,6 @@ W = 0x11
 A = 0x1E
 S = 0x1F
 D = 0x20
-SPACE = 0x39
-DOWN = 0xD0
 
 NP_2 = 0x50
 NP_4 = 0x4B
@@ -67,7 +65,10 @@ def ReleaseKey(hexKeyCode):
     ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra) )
     x = Input( ctypes.c_ulong(1), ii_ )
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
+def KeyPress():
+    PressKey(0x46) # press F
+    time.sleep(.5)
+    ReleaseKey(0x46) #release F
 if __name__ == '__main__':
     PressKey(0x11)
     time.sleep(1)

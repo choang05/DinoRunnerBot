@@ -1,31 +1,35 @@
+#   Standard libraries
+import os
+import time
+import logging
+import numpy as np
+import cv2
+import win32gui 
+# import pytesseract
 from PIL import ImageGrab
 from PIL import Image
+from selenium import webdriver
+#   local libraries
+import DinoGameAPI
+import directkeys
 from grabscreen import grab_screen
 from getkeys import key_check
-import cv2
-import time
-import win32gui 
-import numpy as np
-# import pytesseract
-import os
-import directkeys
 
 def main():
     for i in list(range(3))[::-1]:
         print(i+1)
         time.sleep(1)
 
-    target_window_name = r'chrome://dino/ - Google Chrome'
-
-    hwnd = win32gui.FindWindow(None, target_window_name)
+    #   Open the chrome browser and open the game
+    DinoGameAPI.open_game()
 
     last_time = time.time()
     paused = False
     print('STARTING!!!')
-    while(True):
-        if not paused:
-            
 
+    #   While running...
+    while (DinoGameAPI.is_game_running()):
+        if not paused:
 #             #grabbed_image = cv2.resize(grabbed_image, (640, 360))
 #             #cv2.imwrite('image.png',grabbed_image)
 #             #cv2.imshow('window', grabbed_image)
@@ -38,11 +42,12 @@ def main():
 #             last_time = time.time()
 
             #   if active window is our application...
-            if win32gui.GetWindowText(win32gui.GetForegroundWindow()) == target_window_name:
-                print('PLAYING GAME!')
+            if DinoGameAPI.is_game_focused():
+                # print('PLAYING GAME!')
+                img = DinoGameAPI.get_screen()
 #                 RGB_image = _get_window_image(hwnd)
 #                 img_HP_bar = _get_HP_bar_image_from_image(RGB_image)
-#                 cv2.imshow("HP Bar", img_HP_bar)
+                cv2.imshow("Dino Cam", img)
 #                 hp = _get_HP_from_image(img_HP_bar)
 
 #                 if hp != None:
@@ -53,8 +58,8 @@ def main():
 #                         print("Used potion!")
 
 #                 # print(hp)
-            else:
-                print("Target window not active. Doing nothing...")
+            # else:
+            #     print("Target window not active. Doing nothing...")
 
         #   Press 'T' to pause
         keys = key_check()
@@ -68,11 +73,12 @@ def main():
                 paused = True
                 time.sleep(1)
 
-#         #   buffer to avoid crashing
-#         cv2.waitKey(1)
+        #   buffer to avoid crashing
+        cv2.waitKey(1)
 
+    #   Clean up data
     cv2.destroyAllWindows()
-    print("Ended")
+    print("Progam ended.")
 
 # #   returns the image of the game given a window
 # def _get_window_image(window):
